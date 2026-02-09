@@ -10,6 +10,20 @@ from std_msgs.msg import Header, Float32MultiArray, Float32
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Imu, MagneticField
 import math
+import os
+
+CORE_MODEL = os.environ['CORE_MODEL']
+
+def is_rpi():
+    if CORE_MODEL == "rpi":
+        return True
+    else:
+        return False
+
+if is_rpi():
+    serial_port = '/dev/ttyAMA0'
+else:
+    serial_port = '/dev/ttyTHS1'
 
 # Helper class for reading lines from a serial port
 class ReadLine:
@@ -96,7 +110,7 @@ class ugv_bringup(Node):
         self.odom_publisher_ = self.create_publisher(Float32MultiArray, "odom/odom_raw", 100)
         self.voltage_publisher_ = self.create_publisher(Float32, "voltage", 50)
         # Initialize the base controller with the UART port and baud rate
-        self.base_controller = BaseController('/dev/ttyAMA0', 115200)
+        self.base_controller = BaseController(serial_port, 115200)
         # Timer to periodically execute the feedback loop
         self.feedback_timer = self.create_timer(0.001, self.feedback_loop)
 

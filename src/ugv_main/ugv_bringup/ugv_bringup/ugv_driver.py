@@ -8,9 +8,24 @@ from sensor_msgs.msg import JointState
 from std_msgs.msg import Float32, Float32MultiArray
 import subprocess
 import time
+import os
+
+CORE_MODEL = os.environ['CORE_MODEL']
+
+def is_rpi():
+    if CORE_MODEL == "rpi":
+        return True
+    else:
+        return False
+
+if is_rpi():
+    serial_port = '/dev/ttyAMA0'
+else:
+    serial_port = '/dev/ttyTHS1'
+ 
 
 # Initialize serial communication with the UGV
-ser = serial.Serial('/dev/ttyAMA0', 115200, timeout=1)
+ser = serial.Serial(serial_port, 115200, timeout=1)
 
 class UgvDriver(Node):
     def __init__(self, name):
