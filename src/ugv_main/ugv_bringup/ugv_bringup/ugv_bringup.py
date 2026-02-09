@@ -12,18 +12,14 @@ from sensor_msgs.msg import Imu, MagneticField
 import math
 import os
 
-CORE_MODEL = os.environ['CORE_MODEL']
+def is_jetson():
+    result = any("ugv_jetson" in root for root, dirs, files in os.walk("/"))
+    return result
 
-def is_rpi():
-    if CORE_MODEL == "rpi":
-        return True
-    else:
-        return False
-
-if is_rpi():
-    serial_port = '/dev/ttyAMA0'
-else:
+if is_jetson():
     serial_port = '/dev/ttyTHS1'
+else:
+    serial_port = '/dev/ttyAMA0'
 
 # Helper class for reading lines from a serial port
 class ReadLine:
